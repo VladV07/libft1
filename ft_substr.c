@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include "libft.h"
 
 char	*ft_substr(char const *s, unsigned int start, size_t len)
 {
@@ -22,12 +21,12 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 
 	size_s = 0;
 	str = NULL;
-	if (s == NULL)
+	if (s == NULL || len < 0)
 		return (NULL);
 	while (s[size_s] != '\0')
 		size_s++;
 	if (start > size_s)
-		return (ft_strdup(""));
+		start = size_s;
 	if (size_s < len)
 		len = size_s;
 	str = malloc(len + 1);

@@ -76,7 +76,7 @@ static char	**s_to_str(char const *s, char **str, char c, unsigned int	t)
 static char	**do_split(char const *s, char c, char **str, unsigned int col_w)
 {
 	unsigned int	i;
-	long int		j;
+	unsigned int	j;
 	unsigned int	size_w;
 
 	i = 0;
