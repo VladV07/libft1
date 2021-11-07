@@ -11,108 +11,69 @@
 /* ************************************************************************** */
 
 #include <stdlib.h>
+#include "libft.h"
 
-static long int	col_word(char const *s, char c)
+static char			**ft_clear(char **tab)
 {
 	unsigned int	i;
-	unsigned int	col_w;
 
 	i = 0;
-	col_w = 0;
-	while (s[i] != '\0')
-	{
-		while (s[i] == c && s[i] != '\0')
-			i++;
-		if (s[i] == '\0')
-			break ;
-		col_w++;
-		while (s[i] != c && s[i] != '\0')
-			i++;
-	}
-	return (col_w);
+	while (tab[i])
+		free(tab[i++]);
+	free(tab);
+	return (NULL);
 }
 
-static unsigned int	size_world(char const *s, char c)
+static size_t		ft_strlen_c(const char *str, char c)
 {
-	unsigned int	size_w;
-
-	size_w = 0;
-	while (s[size_w] != c && s[size_w] != '\0')
-	{
-		size_w++;
-	}
-	return (size_w);
-}
-
-static char	**s_to_str(char const *s, char **str, char c, unsigned int	t)
-{
-	unsigned int	i;
-	unsigned int	j;
-	long int		k;
+	size_t			i;
 
 	i = 0;
-	k = 0;
-	while (s[i] != '\0')
-	{
-		j = 0;
-		while (s[i] != c && s[i] != '\0')
-		{
-			str[k][j] = s[i];
-			j++;
-			if (s[i + 1] == c || s[i + 1] == '\0')
-			{
-				str[k][j] = '\0';
-				k++;
-			}
-			i++;
-		}
-		while (s[i] == c && s[i] != '\0')
-			i++;
-	}
-	str[t] = NULL;
-	return (str);
+	while (str[i] && str[i] != c)
+		i++;
+	return (i);
 }
 
-static char	**do_split(char const *s, char c, char **str, unsigned int col_w)
+static size_t		ft_count_words(const char *str, char c)
 {
-	unsigned int	i;
-	unsigned int	j;
-	unsigned int	size_w;
+	size_t			i;
+	size_t			count;
 
 	i = 0;
-	j = 0;
-	size_w = 0;
-	while (j < col_w)
+	count = 0;
+	while (str[i])
 	{
-		i = i + size_w;
-		while (s[i] == c && s[i] != '\0')
-			i++;
-		size_w = size_world(&s[i], c);
-		str[j] = (char *)malloc(sizeof(char) * size_w + 1);
-		if (str[j] == NULL)
-		{
-			while (j >= 0)
-				free(str[j--]);
-			free(str);
-			return (NULL);
-		}
-		j++;
+		if ((str[i] != c && str[i + 1] && str[i + 1] == c)
+							|| (str[i] != c && !str[i + 1]))
+			count++;
+		i++;
 	}
-	str = s_to_str(s, str, c, j);
-	return (str);
+	return (count);
 }
 
-char	**ft_split(char const *s, char c)
+char				**ft_split(char const *s, char c)
 {
-	unsigned int	col_w;
-	char			**str;
+	size_t			i;
+	size_t			start;
+	char			**array;
 
-	if (s == NULL)
+	i = 0;
+	start = 0;
+	if (!s)
 		return (NULL);
-	col_w = col_word(s, c);
-	str = (char **)malloc(sizeof(char *) * col_w + 1);
-	if (str == NULL)
+	if (!(array = malloc((ft_count_words(s, c) + 1) * sizeof(char *))))
 		return (NULL);
-	str = do_split(s, c, str, col_w);
-	return (str);
+	while (s[i++] == c)
+		start++;
+	i = -1;
+	while (++i < ft_count_words(s, c))
+	{
+		if (!(array[i] = ft_substr(s, start, ft_strlen_c(&s[start], c))))
+			return (ft_clear(array));
+		start += ft_strlen_c(&s[start], c);
+		while (s[start] == c)
+			start++;
+	}
+	array[i] = NULL;
+	return (array);
 }
